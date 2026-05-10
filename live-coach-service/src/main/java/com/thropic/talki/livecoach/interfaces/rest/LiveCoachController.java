@@ -31,14 +31,17 @@ public class LiveCoachController {
             @RequestParam String userId,
             @RequestParam String mode,
             @RequestParam(required = false) String scenarioId,
+            @RequestParam(required = false, defaultValue = "") String transcriptGemini,
+            @RequestParam(defaultValue = "0") int wordsPerMinute,
+            @RequestParam(defaultValue = "0.0") double silenceRatio,
+            @RequestParam(defaultValue = "0.0") double volumeRmsAvg,
             @RequestParam(defaultValue = "300") int durationSeconds,
             @RequestParam(defaultValue = "ciclos_6_10") String academicSegment) {
 
-        String audioUri = "supabase://talki-audio-sessions/sessions/" + sessionId + "/audio.wav";
-
         SessionLiveFinalizedEvent event = orchestrator.finalizeAndPublish(
                 sessionId, userId, mode, scenarioId,
-                audioUri, durationSeconds, academicSegment
+                transcriptGemini, wordsPerMinute, silenceRatio, volumeRmsAvg,
+                durationSeconds, academicSegment
         );
 
         return ResponseEntity.accepted().body(event);

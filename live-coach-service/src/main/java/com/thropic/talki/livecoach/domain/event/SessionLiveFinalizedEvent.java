@@ -13,15 +13,20 @@ public class SessionLiveFinalizedEvent {
     private String userId;
     private String mode;
     private String scenarioId;
-    private String audioUri;
+    private String transcriptGemini;
+    private int wordsPerMinute;
+    private double silenceRatio;
+    private double volumeRmsAvg;
     private int durationSeconds;
     private String academicSegment;
 
     public SessionLiveFinalizedEvent() {}
 
     public SessionLiveFinalizedEvent(String sessionId, String userId, String mode,
-                                      String scenarioId, String audioUri,
-                                      int durationSeconds, String academicSegment) {
+                                      String scenarioId, String transcriptGemini,
+                                      int wordsPerMinute, double silenceRatio,
+                                      double volumeRmsAvg, int durationSeconds,
+                                      String academicSegment) {
         this.eventId = UUID.randomUUID().toString();
         this.occurredAt = Instant.now();
         this.traceId = UUID.randomUUID().toString();
@@ -29,7 +34,10 @@ public class SessionLiveFinalizedEvent {
         this.userId = userId;
         this.mode = mode;
         this.scenarioId = scenarioId;
-        this.audioUri = audioUri;
+        this.transcriptGemini = transcriptGemini;
+        this.wordsPerMinute = wordsPerMinute;
+        this.silenceRatio = silenceRatio;
+        this.volumeRmsAvg = volumeRmsAvg;
         this.durationSeconds = durationSeconds;
         this.academicSegment = academicSegment;
     }
@@ -52,8 +60,14 @@ public class SessionLiveFinalizedEvent {
     public void setMode(String m) { this.mode = m; }
     public String getScenarioId() { return scenarioId; }
     public void setScenarioId(String s) { this.scenarioId = s; }
-    public String getAudioUri() { return audioUri; }
-    public void setAudioUri(String a) { this.audioUri = a; }
+    public String getTranscriptGemini() { return transcriptGemini; }
+    public void setTranscriptGemini(String t) { this.transcriptGemini = t; }
+    public int getWordsPerMinute() { return wordsPerMinute; }
+    public void setWordsPerMinute(int w) { this.wordsPerMinute = w; }
+    public double getSilenceRatio() { return silenceRatio; }
+    public void setSilenceRatio(double s) { this.silenceRatio = s; }
+    public double getVolumeRmsAvg() { return volumeRmsAvg; }
+    public void setVolumeRmsAvg(double v) { this.volumeRmsAvg = v; }
     public int getDurationSeconds() { return durationSeconds; }
     public void setDurationSeconds(int d) { this.durationSeconds = d; }
     public String getAcademicSegment() { return academicSegment; }

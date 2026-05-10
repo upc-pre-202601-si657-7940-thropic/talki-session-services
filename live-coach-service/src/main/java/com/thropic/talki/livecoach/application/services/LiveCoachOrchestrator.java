@@ -31,10 +31,16 @@ public class LiveCoachOrchestrator {
 
     public SessionLiveFinalizedEvent finalizeAndPublish(String sessionId, String userId,
                                                          String mode, String scenarioId,
-                                                         String audioUri, int durationSeconds,
+                                                         String transcriptGemini,
+                                                         int wordsPerMinute,
+                                                         double silenceRatio,
+                                                         double volumeRmsAvg,
+                                                         int durationSeconds,
                                                          String academicSegment) {
         SessionLiveFinalizedEvent event = new SessionLiveFinalizedEvent(
-                sessionId, userId, mode, scenarioId, audioUri, durationSeconds, academicSegment
+                sessionId, userId, mode, scenarioId,
+                transcriptGemini, wordsPerMinute, silenceRatio, volumeRmsAvg,
+                durationSeconds, academicSegment
         );
         publisher.publish(event);
         return event;
