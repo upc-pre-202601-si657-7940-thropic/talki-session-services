@@ -1,53 +1,66 @@
 package com.thropic.talki.session.interfaces.rest;
 
+import com.thropic.talki.session.application.services.SessionCommandService;
+import com.thropic.talki.session.application.services.SessionQueryService;
+import com.thropic.talki.session.domain.model.entities.Feedback;
 import com.thropic.talki.session.domain.model.entities.Session;
-import com.thropic.talki.session.domain.model.entities.User;
-import com.thropic.talki.session.infrastructure.persistence.jpa.repositories.SessionRepository;
-import com.thropic.talki.session.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.thropic.talki.session.interfaces.rest.dto.CreateSessionRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/sessions")
 public class SessionController {
 
-    private final SessionRepository sessionRepository;
-    private final UserRepository userRepository;
+    private final SessionCommandService commandService;
+    private final SessionQueryService queryService;
 
-    public SessionController(SessionRepository sessionRepository, UserRepository userRepository) {
-        this.sessionRepository = sessionRepository;
-        this.userRepository = userRepository;
+    public SessionController(SessionCommandService commandService,
+                              SessionQueryService queryService) {
+        this.commandService = commandService;
+        this.queryService = queryService;
     }
 
     @PostMapping
     public ResponseEntity<Session> create(@RequestBody CreateSessionRequest req) {
-        User user = userRepository.findById(req.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + req.userId()));
-        Session session = new Session(req.title(), req.sessionType(), user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(sessionRepository.save(session));
+        Session session = commandService.create(req.userId(), req.title(), req.sessionType());
+        return ResponseEntity.status(HttpStatus.CREATED).body(session);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Session> getById(@PathVariable Long id) {
-        return sessionRepository.findById(id)
+        return queryService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
     public ResponseEntity<List<Session>> getByUser(@RequestParam Long userId) {
-        return ResponseEntity.ok(sessionRepository.findByUserId(userId));
+        return ResponseEntity.ok(queryService.findByUserId(userId));
     }
 
     @PostMapping("/{id}/finalize")
     public ResponseEntity<Session> finalize(@PathVariable Long id) {
-        Session session = sessionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Session not found: " + id));
-        session.finalizeSession();
-        return ResponseEntity.accepted().body(sessionRepository.save(session));
+        return ResponseEntity.accepted().body(commandService.finalize(id));
+    }
+
+    @PostMapping("/{id}/feedbacks")
+    public ResponseEntity<Feedback> addFeedback(@PathVariable Long id,
+                                                 @RequestBody Map<String, String> body) {
+        Feedback feedback = commandService.addFeedback(
+                id,
+                body.getOrDefault("feedbackType", "general"),
+                body.getOrDefault("content", "")
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(feedback);
+    }
+
+    @GetMapping("/{id}/feedbacks")
+    public ResponseEntity<List<Feedback>> listFeedbacks(@PathVariable Long id) {
+        return ResponseEntity.ok(queryService.findFeedbacksBySessionId(id));
     }
 }
