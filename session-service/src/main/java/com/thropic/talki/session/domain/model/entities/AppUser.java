@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +19,9 @@ public class User {
     @Column(name = "academic_segment")
     private String academicSegment;
 
-    protected User() {}
+    protected AppUser() {}
 
-    public User(String email, String username, String academicSegment) {
+    public AppUser(String email, String username, String academicSegment) {
         this.email = email;
         this.username = username;
         this.academicSegment = academicSegment;

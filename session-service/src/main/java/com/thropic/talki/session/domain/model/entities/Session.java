@@ -24,7 +24,7 @@ public class Session {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private AppUser user;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -34,7 +34,7 @@ public class Session {
 
     protected Session() {}
 
-    public Session(String title, String sessionType, User user) {
+    public Session(String title, String sessionType, AppUser user) {
         this.title = title;
         this.sessionType = sessionType;
         this.user = user;
@@ -62,7 +62,7 @@ public class Session {
     public String getTitle() { return title; }
     public SessionStatus getStatus() { return status; }
     public String getSessionType() { return sessionType; }
-    public User getUser() { return user; }
+    public AppUser getUser() { return user; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getFinalizedAt() { return finalizedAt; }
 }
